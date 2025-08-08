@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="dm Active Beauty Widget i Početna Stranica - Povećajte preuzimanja aplikacije Moj dm i lojalnost kupaca uz elegantan widget">
+  <title>dm Active Beauty Widget - Rešenje za Program Lojalnosti</title>
+  <style>
+    /* Widget Styles (Unchanged as Provided) */
+    body {
+      font-family: 'Times New Roman', Times, serif, sans-serif;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    .widget-container {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background-color: #fff;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+      transition: right 0.3s ease-in-out;
+      z-index: 1001;
+      overflow-y: auto;
+    }
+    .widget-container.open {
+      right: 0;
+    }
+    .panel-content {
+      padding: 20px;
+      color: #333;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #00A8B5;
+      color: #fff;
+      border: 1px solid #008A95;
+      border-radius: 50%;
+      padding: 8px;
+      width: 32px;
+      height: 32px;
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .close-button:hover {
+      background-color: #fff;
+      color: #00A8B5;
+    }
+    .close-button:focus {
+      outline: 2px solid #008A95;
+      outline-offset: 2px;
+    }
+    h2, h3, h4 {
+      color: #00A8B5;
+    }
+    .login-section, .offers-section, .progress-section, .app-section, .steps-section, .faq-section {
+      margin-top: 20px;
+    }
+    .login-section {
+      margin-bottom: 0;
+      padding: 0;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 0 0 10px 0;
+      border: 1px solid #00A8B5;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #00A8B5;
+      border: 1px solid #008A95;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #008A95;
+    }
+    .logout-button, .offer-button {
+      margin-top: 10px;
+    }
+    .app-store-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .app-store-button {
+      padding: 10px 20px;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 10px;
+      width: 160px;
+      text-align: center;
+    }
+    .google-play-button {
+      background-color: #137333;
+      border: 1px solid #0F5C2A;
+    }
+    .google-play-button:hover, .google-play-button:focus {
+      background-color: #0F5C2A;
+    }
+    .google-play-button:focus {
+      outline: 2px solid #0F5C2A;
+      outline-offset: 2px;
+    }
+    .app-store-button.apple {
+      background-color: #0057D2;
+      border: 1px solid #0043A8;
+    }
+    .app-store-button.apple:hover, .app-store-button.apple:focus {
+      background-color: #0043A8;
+    }
+    .app-store-button.apple:focus {
+      outline: 2px solid #0043A8;
+      outline-offset: 2px;
+    }
+    .login-error {
+      color: #b91c1c;
+      font-size: 14px;
+      margin-top: 5px;
+      text-align: center;
+    }
+    .privacy-notice, .fine-print {
+      font-size: 12px;
+      color: #666;
+      margin-top: 15px;
+    }
+    .privacy-notice a {
+      color: #00A8B5;
+      text-decoration: none;
+    }
+    .privacy-notice a:hover {
+      text-decoration: underline;
+    }
+    .countdown-timer {
+      font-weight: bold;
+      color: #b91c1c;
+      margin-top: 10px;
+    }
+    .progress-bar {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      height: 20px;
+      margin-top: 10px;
+    }
+    .progress-bar-fill {
+      background-color: #00A8B5;
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease-in-out;
+    }
+    .progress-text {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .rewards-list, .steps-list, .faq-list {
+      font-size: 13px;
+      margin-top: 15px;
+      padding-left: 20px;
+    }
+    .rewards-list li, .steps-list li, .faq-list li {
+      margin-bottom: 6px;
+    }
+    .sticky-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #00A8B5;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 1px solid #008A95;
+      cursor: pointer;
+      z-index: 1000;
+      animation: pulse 2s infinite;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sticky-button:hover {
+      background-color: #008A95;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .sticky-button img {
+      width: 24px;
+      height: 24px;
+    }
+    .collapsible-section {
+      margin-top: 20px;
+    }
+    .collapsible-header {
+      cursor: pointer;
+      position: relative;
+      margin: 0;
+      padding: 12px 40px 12px 12px;
+      background-color: #E6F6F7;
+      border-radius: 4px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .collapsible-header:hover {
+      background-color: #D1E8EA;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .collapsible-header:focus {
+      outline: 2px solid #008A95;
+      outline-offset: 2px;
+    }
+    .collapsible-header::after {
+      content: '▼';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background-color: #00A8B5;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+    .collapsible-header[aria-expanded="true"]::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    .collapsible-content {
+      display: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 10px 0;
+    }
+    .collapsible-content.open {
+      display: block;
+      max-height: 1000px;
+    }
+    @media (max-width: 640px) {
+      .widget-container {
+        width: 100%;
+        right: -100%;
+      }
+      .widget-container.open {
+        right: 0;
+      }
+      .sticky-button {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+      .rewards-list, .steps-list, .faq-list {
+        font-size: 12px;
+      }
+      .close-button {
+        width: 28px;
+        height: 28px;
+        font-size: 20px;
+        padding: 6px;
+      }
+      .app-store-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .app-store-button {
+        width: 100%;
+        max-width: 200px;
+      }
+      .collapsible-content.open {
+        max-height: 1500px;
+      }
+      .collapsible-header {
+        font-size: 16px;
+        padding: 10px 36px 10px 10px;
+      }
+      .collapsible-header::after {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+      }
+    }
+
+    /* Landing Page Styles (Vanilla CSS, Scoped to Avoid Conflicts) */
+    .landing-wrapper {
+      background-color: #F3F4F6;
+      font-family: Arial, sans-serif;
+      color: #1F2937;
+    }
+    .landing-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .landing-header {
+      background: linear-gradient(to right, #00A8B5, #008A95);
+      color: #FFFFFF;
+      padding: 64px 0;
+      text-align: center;
+    }
+    .landing-heading {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    .landing-subheading {
+      font-size: 20px;
+      margin-bottom: 24px;
+    }
+    .landing-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #00A8B5;
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid #008A95;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      animation: pulse 2s infinite;
+    }
+    .landing-button:hover {
+      background-color: #008A95;
+    }
+    .landing-button:focus {
+      outline: 2px solid #008A95;
+      outline-offset: 2px;
+    }
+    .landing-section {
+      padding: 64px 0;
+    }
+    .landing-section-white {
+      background-color: #FFFFFF;
+    }
+    .landing-section-gray {
+      background-color: #F3F4F6;
+    }
+    .landing-section-teal {
+      background-color: #00A8B5;
+      color: #FFFFFF;
+    }
+    .landing-section-heading {
+      font-size: 30px;
+      font-weight: bold;
+      color: #00A8B5;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .landing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .landing-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+    .landing-card {
+      background-color: #F9FAFB;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .landing-card-heading {
+      font-size: 20px;
+      font-weight: 600;
+      color: #00A8B5;
+      margin-bottom: 16px;
+    }
+    .landing-card-text {
+      font-size: 16px;
+      color: #4B5563;
+    }
+    .landing-list {
+      max-width: 672px;
+      margin: 0 auto;
+      list-style: disc;
+      padding-left: 20px;
+      font-size: 16px;
+      color: #4B5563;
+    }
+    .landing-list li {
+      margin-bottom: 16px;
+    }
+    .landing-footer {
+      background-color: #1F2937;
+      color: #FFFFFF;
+      padding: 24px 0;
+      text-align: center;
+    }
+    .landing-cta-button {
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+      padding: 12px 24px;
+      background-color: #FFFFFF;
+      color: #00A8B5;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid #008A95;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s, color 0.3s;
+      animation: pulse 2s infinite;
+    }
+    .landing-cta-button:hover {
+      background-color: #008A95;
+      color: #FFFFFF;
+    }
+    .landing-cta-button:focus {
+      outline: 2px solid #008A95;
+      outline-offset: 2px;
+    }
+    @media (max-width: 640px) {
+      .landing-heading {
+        font-size: 28px;
+      }
+      .landing-subheading {
+        font-size: 16px;
+      }
+      .landing-section-heading {
+        font-size: 24px;
+      }
+      .landing-grid, .landing-grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .landing-button, .landing-cta-button {
+        font-size: 14px;
+        padding: 10px 20px;
+      }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .landing-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .landing-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Landing Page Content (Translated to Serbian) -->
+  <div class="landing-wrapper">
+    <!-- Hero Section -->
+    <header class="landing-header">
+      <div class="landing-container">
+        <h1 class="landing-heading">dm Active Beauty Widget</h1>
+        <p class="landing-subheading">Povećajte preuzimanja aplikacije Moj dm i lojalnost kupaca uz elegantan i korisnički prijateljski widget</p>
+        <button class="landing-button" onclick="document.querySelector('.sticky-button').click()" aria-label="Isprobaj dm Active Beauty Widget">Isprobaj Widget</button>
+      </div>
+    </header>
+
+    <!-- Benefits Section (Rewritten for Marketing Focus) -->
+    <section class="landing-section landing-section-white">
+      <div class="landing-container">
+        <h2 class="landing-section-heading">Zašto odabrati dm Active Beauty Widget?</h2>
+        <div class="landing-grid">
+          <div class="landing-card">
+            <h3 class="landing-card-heading">Direktno povećava broj preuzimanja aplikacije Moj dm</h3>
+            <p class="landing-card-text">Sticky dugme i klizni panel stalno podsećaju posetioce sajta na pogodnosti aplikacije, sa jasnim linkovima ka App Store i Google Play. Time se eliminiše “korak traženja” aplikacije, što dokazano povećava stopu instalacija. Svako novo preuzimanje znači novi korisnik u DM-ovom loyalty ekosistemu.</p>
+          </div>
+          <div class="landing-card">
+            <h3 class="landing-card-heading">Maksimalno iskorišćava postojeći saobraćaj na sajtu</h3>
+            <p class="landing-card-text">Posetioci dm.rs trenutno pregledaju katalog i informacije – ali deo njih nikada ne napravi korak ka preuzimanju aplikacije. Ovaj widget pretvara pasivne posetioce u aktivne članove loyalty programa bez potrebe za dodatnim oglašavanjem ili velikim budžetima za akviziciju.</p>
+          </div>
+          <div class="landing-card">
+            <h3 class="landing-card-heading">Prilagođava se DM-ovom brendu i može se lansirati brzo i bez velikih troškova</h3>
+            <p class="landing-card-text">Widget je potpuno usklađen sa DM vizuelnim identitetom i može biti deo sajta bez spoljnog hostinga. Implementacija je tehnički jednostavna i ne zahteva velike izmene postojećeg sistema, što znači da se može pokrenuti kao 30-dnevni pilot bez rizika.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Design Choices Section (Rewritten for Marketing Focus) -->
+    <section class="landing-section landing-section-gray">
+      <div class="landing-container">
+        <h2 class="landing-section-heading">Korisničko iskustvo</h2>
+        <div class="landing-grid-2">
+          <div class="landing-card">
+            <h3 class="landing-card-heading"> Smanjuje frustraciju korisnika koji ne znaju kako da se uključe u program</h3>
+            <p class="landing-card-text">Mnogi posetioci sajta ne nalaze odmah jasne informacije o tome kako da se registruju u Moj dm program ili preuzmu aplikaciju. Widget ih vodi korak po korak – bez lutanja po menijima, što znači da korisnik od interesovanja do akcije dolazi u 2-3 sekunde.</p>
+          </div>
+          <div class="landing-card">
+            <h3 class="landing-card-heading">Personalizovano iskustvo već pri prvoj poseti sajtu</h3>
+            <p class="landing-card-text">Widget može odmah prikazati relevantne benefite (npr. popuste za roditelje, rođendanske poklone, ekskluzivne ponude) na osnovu kategorije proizvoda koju posetilac upravo gleda. Korisnik ima osećaj da mu se DM direktno obraća i nudi baš ono što mu treba – što povećava zadovoljstvo i lojalnost.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Business Advantages Section (Replaced Technical Highlights) -->
+    <section class="landing-section landing-section-white">
+      <div class="landing-container">
+        <h2 class="landing-section-heading">Poslovne prednosti</h2>
+        <ul class="landing-list">
+          <li><strong>Pristupačno rešenje</strong>: Laka i brza implementacija.</li>
+          <li><strong>Brzo pokretanje</strong>: Pokrenite za nekoliko nedelja, podstičući trenutni angažman kupaca.</li>
+          <li><strong>Skalabilni rast</strong>: Lako proširite na nova tržišta za veći doseg.</li>
+          <li><strong>Proveren ROI</strong>: Povećava preuzimanja, registracije i prodaju uz merljive rezultate.</li>
+          <li><strong>Konkurentska prednost</strong>: Istaknite se modernim programom lojalnosti koji kupci vole.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Call-to-Action Section -->
+    <section class="landing-section landing-section-teal">
+      <div class="landing-container">
+        <h2 class="landing-section-heading" style="color: #FFFFFF;">Spremni da unapredite DM-ov program lojalnosti?</h2>
+        <p class="landing-subheading">Ovaj widget podstiče preuzimanja aplikacije, registracije i zadržavanje uz niske troškove za ažuriranja aplikacije. Pokrenite 30-dnevni pilot na dm.rs za merenje povraćaja ulaganja.</p>
+        <a href="https://www.linkedin.com/in/petar-skrbic/" target="_blank" class="landing-cta-button" aria-label="Kontaktiraj Petar Škrbić na LinkedIn-u">Kontaktiraj Petra Škrbića na LinkedIn-u</a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div class="landing-container">
+        <p>&copy; 2025 Prijedlog za dm Active Beauty Widget. Dizajnirao Petar Škrbić.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Widget Content (Unchanged) -->
+  <button class="sticky-button" aria-label="Kupi! Sakupi! Uštedi! Pridruži se dm Active Beauty">
+    
+    Kupi! Sakupi! Uštedi!
+  </button>
+  <div class="widget-container" role="dialog" aria-label="dm Active Beauty Widget">
+    <button class="close-button" aria-label="Zatvori panel">✕</button>
+    <div class="panel-content">
+      <div class="login-prompt">
+        <h2>Kupi! Sakupi! Uštedi!</h2>
+        <div class="app-section">
+          <h3>Ekskluzivni kuponi u aplikaciji Moj dm</h3>
+          <p>Otkrijte brojne pogodnosti aplikacije Moj dm za iOS i Android i uvek imajte pregled svojih kupona.</p>
+          <div class="app-store-buttons">
+            <button class="app-store-button google-play-button" onclick="window.open('https://play.google.com/store/apps/details?id=de.dm.meindm.android', '_blank')" aria-label="Preuzmi Moj dm sa Google Play">Google Play</button>
+            <button class="app-store-button apple" onclick="window.open('https://apps.apple.com/app/id1186271926?mt=8', '_blank')" aria-label="Preuzmi Moj dm sa App Store">App Store</button>
+          </div>
+        </div>
+        <div class="collapsible-section">
+          <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="benefits-content">Uz svaku kupovinu sakupljate pogodnosti</h3>
+          <div class="collapsible-content" id="benefits-content">
+            <p>Od sada svakom kupovinom dobijate više. Bilo da se radi o kupovini u dm prodavnici ili online, svaka kupovina vodi vas korak bliže ka novom ekskluzivnom popustu.</p>
+            <p>10% na proizvod po izboru pri narednoj kupovini, do čak 20% na kompletnu kupovinu – isplati se redovno kupovati u dm-u!</p>
+            <p>Godina sakupljanja počinje 1. 5. 2025. i završava se 30. 4. 2026. Posle toga, promet koji ste sakupili svojim kupovinama će se resetovati na 0 dinara i počećete ponovo sa sakupljanjem. Zato počnite da sakupljate što je moguće pre. Uživajte!</p>
+          </div>
+        </div>
+        <div class="collapsible-section">
+          <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="welcome-gift-content">Vaš poklon dobrodošlice</h3>
+          <div class="collapsible-content" id="welcome-gift-content">
+            <p>Preuzmite odmah aplikaciju Moj dm na svoj pametni telefon da biste još jednostavnije kupovali iz udobnosti vašeg doma. Kako bi vam kupovina bila još lepša, odlučili smo da vas obradujemo poklonom dobrodošlice: <strong>-10% na prvu kupovinu preko aplikacije Moj dm!</strong></p>
+            <p><strong>Kako do kupona:</strong></p>
+            <ul>
+              <li>Preuzmite aplikaciju Moj dm sa Google ili Apple prodavnice.</li>
+              <li>Kreirajte i prijavite se na Moj dm nalog.</li>
+              <li>Kupon od -10% će se tada pojaviti u odeljku kuponi.</li>
+              <li>Aktivirajte kupon i uživajte u kupovini.</li>
+            </ul>
+            <p><strong>Jednostavnije od ovoga ne može da se kupuje:</strong></p>
+            <ul>
+              <li>Svi kuponi uvek pri ruci – iskoristite ih skeniranjem QR-koda u dm drogerijama ili putem online kupovine.</li>
+              <li>Brza i laka kupovina na vašem pametnom telefonu.</li>
+              <li>Zapamtite omiljene proizvode i lako ih kupite kasnije.</li>
+              <li>Praktičan skener proizvoda.</li>
+              <li>Lista želja – može da se koristi kao digitalna lista za kupovinu za vašu posetu dm drogeriji.</li>
+              <li>eRačun – pregled svih računa iz kupovina u dm prodavnicama, u slučaju da skenirate Karticu kupca iz aplikacije Moj dm tokom kupovine.</li>
+            </ul>
+            <p>Isprobajte odmah i uživajte u našoj aplikaciji!</p>
+          </div>
+        </div>
+        <div class="collapsible-section">
+          <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="how-it-works-content">Kako funkcioniše?</h3>
+          <div class="collapsible-content" id="how-it-works-content">
+            <ul class="steps-list">
+              <li><strong>Korak 1:</strong> Skanirajte karticu kupca pri kupovini u dm drogerijama ili kupujte online kao registrovani kupac.</li>
+              <li><strong>Korak 2:</strong> Na početnoj strani u aplikaciji možete videti aktuelan promet koji ste skupili do sada.</li>
+              <li><strong>Korak 3:</strong> Čim dostignete određeni nivo prometa, možete pronaći novi kupon koji ste ostvarili na sledeću kupovinu u kupon-centru.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="progress-section">
+          <p>Samo 3.900 RSD do -15% na proizvod po izboru!</p>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 0%;"></div>
+          </div>
+          <p class="progress-text">Počnite sakupljanje danas!</p>
+        </div>
+        <div class="collapsible-section">
+          <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="levels-content">Nivoi</h3>
+          <div class="collapsible-content" id="levels-content">
+            <ul class="rewards-list">
+              <li>Nivo 1: -10% na proizvod po izboru, nakon prve kupovine</li>
+              <li>Nivo 2: -15% na proizvod po izboru, nakon ostvarenog prometa od 3.900 RSD</li>
+              <li>Nivo 3: -10% na sve proizvode dm marke, nakon ostvarenog prometa od 7.900 RSD</li>
+              <li>Nivo 4: -10% na sve, nakon ostvarenog prometa od 12.900 RSD</li>
+              <li>Nivo 5: -20% na proizvod po izboru, nakon ostvarenog prometa od 19.000 RSD</li>
+              <li>Nivo 6: -15% na sve proizvode dm marke, nakon ostvarenog prometa od 29.000 RSD</li>
+              <li>Nivo 7: -15% na sve, nakon ostvarenog prometa od 49.000 RSD</li>
+              <li>Nivo 8: -25% na proizvod po izboru, nakon ostvarenog prometa od 69.000 RSD</li>
+              <li>Nivo 9: -20% na sve proizvode dm marke, nakon ostvarenog prometa od 94.000 RSD</li>
+              <li>Nivo 10: -20% na sve, nakon ostvarenog prometa od 119.000 RSD</li>
+            </ul>
+          </div>
+        </div>
+        <div class="collapsible-section">
+          <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="faq-content">Najčešća pitanja</h3>
+          <div class="collapsible-content" id="faq-content">
+            <ul class="faq-list">
+              <li><strong>Da li se aplikacija može koristiti i pri kupovini u radnji?</strong><br>Da, možete je koristiti i pri kupovini u radnji.</li>
+              <li><strong>Ne mogu da pronađem aplikaciju u Apple Store-u?</strong><br>Ukoliko koristite iOS, proverite da li je vaš Apple ID podešen na zemlju Srbiju: u App Store-u kliknite na svoj Apple ID, idite na Country/Region, i izaberite Serbia.</li>
+              <li><strong>Koji softver je pogodan za aplikaciju Moj dm?</strong><br>Android 8.0 ili noviji, iOS 16.0 ili noviji.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="login-section">
+          <p>Preuzmite aplikaciju Moj dm i prijavite se da biste započeli sakupljanje!</p>
+          <input type="text" id="login-email" placeholder="Unesite email za Moj dm nalog" aria-label="Moj dm Email" />
+          <button onclick="handleLogin()" aria-label="Pridruži se odmah">Pridruži se odmah</button>
+        </div>
+        <p class="privacy-notice">Prijavom se slažete sa <a href="https://dm.rs/politika-privatnosti" target="_blank">politikom privatnosti</a>.</p>
+        <p class="fine-print">*Ponuda važi za registrovane korisnike aplikacije Moj dm. Kuponi ne važe za početne formule za odojčad i poklon-kartice.</p>
+      </div>
+      <div class="mock-content" style="display: none;">
+        <h2>Dobro došli!</h2>
+        <h3>Vaš promet: 0 RSD</h3>
+        <div class="progress-section">
+          <p>Još 3.900 RSD do -15% na proizvod po izboru!</p>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 0%;"></div>
+          </div>
+          <p class="progress-text">Nivo 1: -10% na proizvod po izboru (aktivan)</p>
+        </div>
+        <div class="collapsible-section">
+          <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="levels-content-logged">Nivoi</h3>
+          <div class="collapsible-content" id="levels-content-logged">
+            <ul class="rewards-list">
+              <li>Nivo 1: -10% na proizvod po izboru, nakon prve kupovine</li>
+              <li>Nivo 2: -15% na proizvod po izboru, nakon ostvarenog prometa od 3.900 RSD</li>
+              <li>Nivo 3: -10% na sve proizvode dm marke, nakon ostvarenog prometa od 7.900 RSD</li>
+              <li>Nivo 4: -10% na sve, nakon ostvarenog prometa od 12.900 RSD</li>
+              <li>Nivo 5: -20% na proizvod po izboru, nakon ostvarenog prometa od 19.000 RSD</li>
+              <li>Nivo 6: -15% na sve proizvode dm marke, nakon ostvarenog prometa od 29.000 RSD</li>
+              <li>Nivo 7: -15% na sve, nakon ostvarenog prometa od 49.000 RSD</li>
+              <li>Nivo 8: -25% na proizvod po izboru, nakon ostvarenog prometa od 69.000 RSD</li>
+              <li>Nivo 9: -20% na sve proizvode dm marke, nakon ostvarenog prometa od 94.000 RSD</li>
+              <li>Nivo 10: -20% na sve, nakon ostvarenog prometa od 119.000 RSD</li>
+            </ul>
+          </div>
+        </div>
+        <div class="offers-section">
+          <h4>Vaši kuponi</h4>
+          <p>-10% na prvu kupovinu (važi 28 dana)</p>
+          <p>Rođendanski kupon: -10% na dm marke (važi 28 dana)</p>
+          <button class="offer-button" aria-label="Aktiviraj kupon">Aktiviraj kupon</button>
+          <p class="countdown-timer">Kuponi važe još 28 dana!</p>
+        </div>
+        <button class="logout-button" onclick="handleLogout()" aria-label="Odjavi se iz Moj dm">Odjavi se</button>
+        <p class="fine-print">*Ponuda važi za registrovane korisnike aplikacije Moj dm. Kuponi ne važe za početne formule za odojčad i poklon-kartice.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const panel = document.querySelector('.widget-container');
+    const stickyButton = document.querySelector('.sticky-button');
+    const initialData = { user: { name: '', turnover: 0, level: 0, coupons: [] } };
+    const levels = [
+      { threshold: 0, coupon: '-10% na proizvod po izboru' },
+      { threshold: 3900, coupon: '-15% na proizvod po izboru' },
+      { threshold: 7900, coupon: '-10% na sve proizvode dm marke' },
+      { threshold: 12900, coupon: '-10% na sve' },
+      { threshold: 19000, coupon: '-20% na proizvod po izboru' },
+      { threshold: 29000, coupon: '-15% na sve proizvode dm marke' },
+      { threshold: 49000, coupon: '-15% na sve' },
+      { threshold: 69000, coupon: '-25% na proizvod po izboru' },
+      { threshold: 94000, coupon: '-20% na sve proizvode dm marke' },
+      { threshold: 119000, coupon: '-20% na sve' }
+    ];
+    const translations = {
+      sr: {
+        welcome: 'Kupi! Sakupi! Uštedi!',
+        turnover: 'Vaš promet',
+        login: 'Pridruži se odmah',
+        logout: 'Odjavi se',
+        coupons: 'Vaši kuponi',
+        progress: 'Još %s RSD do %s!',
+        privacy: 'Prijavom se slažete sa <a href="https://dm.rs/politika-privatnosti" target="_blank">politikom privatnosti</a>.',
+        finePrint: '*Ponuda važi za registrovane korisnike aplikacije Moj dm. Kuponi ne važe za početne formule za odojčad i poklon-kartice.'
+      },
+      hr: {
+        welcome: 'Kupi! Sakupi! Uštedi!',
+        turnover: 'Vaš promet',
+        login: 'Pridruži se odmah',
+        logout: 'Odjavi se',
+        coupons: 'Vaši kuponi',
+        progress: 'Još %s RSD do %s!',
+        privacy: 'Prijavom se slažete s <a href="https://dm.rs/politika-privatnosti" target="_blank">politikom privatnosti</a>.',
+        finePrint: '*Ponuda važi za registrovane korisnike aplikacije Moj dm. Kuponi ne važe za početne formule za odojčad i poklon-kartice.'
+      },
+      de: {
+        welcome: 'Kaufen! Sammeln! Sparen!',
+        turnover: 'Ihr Umsatz',
+        login: 'Jetzt beitreten',
+        logout: 'Abmelden',
+        coupons: 'Ihre Gutscheine',
+        progress: 'Noch %s RSD bis %s!',
+        privacy: 'Mit der Anmeldung stimmen Sie der <a href="https://dm.rs/politika-privatnosti" target="_blank">Datenschutzrichtlinie</a> zu.',
+        finePrint: '*Angebot gilt für registrierte Nutzer der Mein dm-App. Gutscheine gelten nicht für Säuglingsanfangsnahrung und Geschenkkarten.'
+      }
+    };
+    let currentLang = 'sr';
+
+    async function loadUserData() {
+      try {
+        const response = await fetch('https://dm.rs/api/user', {
+          headers: { 'Authorization': 'Bearer <token>' }
+        });
+        return response.ok ? await response.json() : initialData;
+      } catch (error) {
+        return initialData;
+      }
+    }
+
+    function getNextLevel(turnover) {
+      for (let i = 0; i < levels.length; i++) {
+        if (turnover < levels[i].threshold) {
+          return { threshold: levels[i].threshold, coupon: levels[i].coupon, level: i };
+        }
+      }
+      return null;
+    }
+
+    function toggleCollapsible(event) {
+      const header = event.currentTarget;
+      const content = document.getElementById(header.getAttribute('aria-controls'));
+      const isExpanded = header.getAttribute('aria-expanded') === 'true';
+      header.setAttribute('aria-expanded', !isExpanded);
+      content.classList.toggle('open', !isExpanded);
+    }
+
+    window.handleLogin = function() {
+      const emailInput = document.getElementById('login-email');
+      const email = emailInput ? emailInput.value.trim() : "";
+      const errorElement = document.querySelector('.login-error');
+      if (errorElement) errorElement.remove();
+      const loginSection = document.querySelector('.login-section');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'login-error';
+      if (!email) {
+        errorDiv.textContent = 'Molimo unesite email za Moj dm nalog!';
+        loginSection.appendChild(errorDiv);
+        return;
+      }
+      fetch('https://dm.rs/api/login', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+        headers: { 'Content-Type': 'application/json' }
+      }).then(response => {
+        if (response.ok) {
+          const loginPrompt = document.querySelector('.login-prompt');
+          const mockContent = document.querySelector('.mock-content');
+          loginPrompt.style.display = 'none';
+          mockContent.style.display = 'block';
+          updateWidget({ user: { name: 'Active Beauty Korisnik', turnover: 1000, level: 1, coupons: ['-10% na prvu kupovinu', 'Rođendanski kupon: -10% na dm marke'] } });
+        }
+      });
+    };
+
+    window.handleLogout = function() {
+      localStorage.removeItem('dmUser');
+      const loginPrompt = document.querySelector('.login-prompt');
+      const mockContent = document.querySelector('.mock-content');
+      loginPrompt.style.display = 'block';
+      mockContent.style.display = 'none';
+      updateWidget(initialData);
+    };
+
+    window.updateWidget = function(data) {
+      panel.innerHTML = '';
+      const nextLevel = getNextLevel(data.user.turnover);
+      const progressPercent = nextLevel ? Math.min((data.user.turnover / nextLevel.threshold) * 100, 100) : 100;
+      const content = data.user.name ? `
+        <button class="close-button" aria-label="${translations[currentLang].logout}">✕</button>
+        <div class="panel-content">
+          <h2>Dobro došli, ${data.user.name}!</h2>
+          <h3>${translations[currentLang].turnover}: ${data.user.turnover} RSD</h3>
+          <div class="progress-section">
+            <p>${nextLevel ? translations[currentLang].progress.replace('%s', (nextLevel.threshold - data.user.turnover)).replace('%s', nextLevel.coupon) : 'Čestitamo! Dostigli ste najviši nivo!'}</p>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
+            </div>
+            <p class="progress-text">Nivo ${data.user.level}: ${levels[data.user.level].coupon} (aktivan)</p>
+          </div>
+          <div class="collapsible-section">
+            <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="levels-content-logged">Nivoi</h3>
+            <div class="collapsible-content" id="levels-content-logged">
+              <ul class="rewards-list">
+                <li>Nivo 1: -10% na proizvod po izboru, nakon prve kupovine</li>
+                <li>Nivo 2: -15% na proizvod po izboru, nakon ostvarenog prometa od 3.900 RSD</li>
+                <li>Nivo 3: -10% na sve proizvode dm marke, nakon ostvarenog prometa od 7.900 RSD</li>
+                <li>Nivo 4: -10% na sve, nakon ostvarenog prometa od 12.900 RSD</li>
+                <li>Nivo 5: -20% na proizvod po izboru, nakon ostvarenog prometa od 19.000 RSD</li>
+                <li>Nivo 6: -15% na sve proizvode dm marke, nakon ostvarenog prometa od 29.000 RSD</li>
+                <li>Nivo 7: -15% na sve, nakon ostvarenog prometa od 49.000 RSD</li>
+                <li>Nivo 8: -25% na proizvod po izboru, nakon ostvarenog prometa od 69.000 RSD</li>
+                <li>Nivo 9: -20% na sve proizvode dm marke, nakon ostvarenog prometa od 94.000 RSD</li>
+                <li>Nivo 10: -20% na sve, nakon ostvarenog prometa od 119.000 RSD</li>
+              </ul>
+            </div>
+          </div>
+          <div class="offers-section">
+            <h4>${translations[currentLang].coupons}</h4>
+            ${data.user.coupons.map(coupon => `<p>${coupon} (važi 28 dana)</p>`).join('')}
+            <button class="offer-button" aria-label="Aktiviraj kupon">Aktiviraj kupon</button>
+            <p class="countdown-timer">Kuponi važe još 28 dana!</p>
+          </div>
+          <button class="logout-button" onclick="handleLogout()" aria-label="${translations[currentLang].logout}">${translations[currentLang].logout}</button>
+          <p class="fine-print">${translations[currentLang].finePrint}</p>
+        </div>
+      ` : `
+        <button class="close-button" aria-label="Zatvori panel">✕</button>
+        <div class="panel-content">
+          <div class="login-prompt">
+            <h2>${translations[currentLang].welcome}</h2>
+            <div class="app-section">
+              <h3>Ekskluzivni kuponi u aplikaciji Moj dm</h3>
+              <p>Otkrijte brojne pogodnosti aplikacije Moj dm za iOS i Android i uvek imajte pregled svojih kupona.</p>
+              <div class="app-store-buttons">
+                <button class="app-store-button google-play-button" onclick="window.open('https://play.google.com/store/apps/details?id=de.dm.meindm.android', '_blank')" aria-label="Preuzmi Moj dm sa Google Play">Google Play</button>
+                <button class="app-store-button apple" onclick="window.open('https://apps.apple.com/app/id1186271926?mt=8', '_blank')" aria-label="Preuzmi Moj dm sa App Store">App Store</button>
+              </div>
+            </div>
+            <div class="collapsible-section">
+              <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="benefits-content">Uz svaku kupovinu sakupljate pogodnosti</h3>
+              <div class="collapsible-content" id="benefits-content">
+                <p>Od sada svakom kupovinom dobijate više. Bilo da se radi o kupovini u dm prodavnici ili online, svaka kupovina vodi vas korak bliže ka novom ekskluzivnom popustu.</p>
+                <p>10% na proizvod po izboru pri narednoj kupovini, do čak 20% na kompletnu kupovinu – isplati se redovno kupovati u dm-u!</p>
+                <p>Godina sakupljanja počinje 1. 5. 2025. i završava se 30. 4. 2026. Posle toga, promet koji ste sakupili svojim kupovinama će se resetovati na 0 dinara i počećete ponovo sa sakupljanjem. Zato počnite da sakupljate što je moguće pre. Uživajte!</p>
+              </div>
+            </div>
+            <div class="collapsible-section">
+              <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="welcome-gift-content">Vaš poklon dobrodošlice</h3>
+              <div class="collapsible-content" id="welcome-gift-content">
+                <p>Preuzmite odmah aplikaciju Moj dm na svoj pametni telefon da biste još jednostavnije kupovali iz udobnosti vašeg doma. Kako bi vam kupovina bila još lepša, odlučili smo da vas obradujemo poklonom dobrodošlice: <strong>-10% na prvu kupovinu preko aplikacije Moj dm!</strong></p>
+                <p><strong>Kako do kupona:</strong></p>
+                <ul>
+                  <li>Preuzmite aplikaciju Moj dm sa Google ili Apple prodavnice.</li>
+                  <li>Kreirajte i prijavite se na Moj dm nalog.</li>
+                  <li>Kupon od -10% će se tada pojaviti u odeljku kuponi.</li>
+                  <li>Aktivirajte kupon i uživajte u kupovini.</li>
+                </ul>
+                <p><strong>Jednostavnije od ovoga ne može da se kupuje:</strong></p>
+                <ul>
+                  <li>Svi kuponi uvek pri ruci – iskoristite ih skeniranjem QR-koda u dm drogerijama ili putem online kupovine.</li>
+                  <li>Brza i laka kupovina na vašem pametnom telefonu.</li>
+                  <li>Zapamtite omiljene proizvode i lako ih kupite kasnije.</li>
+                  <li>Praktičan skener proizvoda.</li>
+                  <li>Lista želja – može da se koristi kao digitalna lista za kupovinu za vašu posetu dm drogeriji.</li>
+                  <li>eRačun – pregled svih računa iz kupovina u dm prodavnicama, u slučaju da skenirate Karticu kupca iz aplikacije Moj dm tokom kupovine.</li>
+                </ul>
+                <p>Isprobajte odmah i uživajte u našoj aplikaciji!</p>
+              </div>
+            </div>
+            <div class="collapsible-section">
+              <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="how-it-works-content">Kako funkcioniše?</h3>
+              <div class="collapsible-content" id="how-it-works-content">
+                <ul class="steps-list">
+                  <li><strong>Korak 1:</strong> Skanirajte karticu kupca pri kupovini u dm drogerijama ili kupujte online kao registrovani kupac.</li>
+                  <li><strong>Korak 2:</strong> Na početnoj strani u aplikaciji možete videti aktuelan promet koji ste skupili do sada.</li>
+                  <li><strong>Korak 3:</strong> Čim dostignete određeni nivo prometa, možete pronaći novi kupon koji ste ostvarili na sledeću kupovinu u kupon-centru.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="progress-section">
+              <p>Samo 3.900 RSD do -15% na proizvod po izboru!</p>
+              <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: 0%;"></div>
+              </div>
+              <p class="progress-text">Počnite sakupljanje danas!</p>
+            </div>
+            <div class="collapsible-section">
+              <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="levels-content">Nivoi</h3>
+              <div class="collapsible-content" id="levels-content">
+                <ul class="rewards-list">
+                  <li>Nivo 1: -10% na proizvod po izboru, nakon prve kupovine</li>
+                  <li>Nivo 2: -15% na proizvod po izboru, nakon ostvarenog prometa od 3.900 RSD</li>
+                  <li>Nivo 3: -10% na sve proizvode dm marke, nakon ostvarenog prometa od 7.900 RSD</li>
+                  <li>Nivo 4: -10% na sve, nakon ostvarenog prometa od 12.900 RSD</li>
+                  <li>Nivo 5: -20% na proizvod po izboru, nakon ostvarenog prometa od 19.000 RSD</li>
+                  <li>Nivo 6: -15% na sve proizvode dm marke, nakon ostvarenog prometa od 29.000 RSD</li>
+                  <li>Nivo 7: -15% na sve, nakon ostvarenog prometa od 49.000 RSD</li>
+                  <li>Nivo 8: -25% na proizvod po izboru, nakon ostvarenog prometa od 69.000 RSD</li>
+                  <li>Nivo 9: -20% na sve proizvode dm marke, nakon ostvarenog prometa od 94.000 RSD</li>
+                  <li>Nivo 10: -20% na sve, nakon ostvarenog prometa od 119.000 RSD</li>
+                </ul>
+              </div>
+            </div>
+            <div class="collapsible-section">
+              <h3 class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="faq-content">Najčešća pitanja</h3>
+              <div class="collapsible-content" id="faq-content">
+                <ul class="faq-list">
+                  <li><strong>Da li se aplikacija može koristiti i pri kupovini u radnji?</strong><br>Da, možete je koristiti i pri kupovini u radnji.</li>
+                  <li><strong>Ne mogu da pronađem aplikaciju u Apple Store-u?</strong><br>Ukoliko koristite iOS, proverite da li je vaš Apple ID podešen na zemlju Srbiju: u App Store-u kliknite na svoj Apple ID, idite na Country/Region, i izaberite Serbia.</li>
+                  <li><strong>Koji softver je pogodan za aplikaciju Moj dm?</strong><br>Android 8.0 ili noviji, iOS 16.0 ili noviji.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="login-section">
+              <p>Preuzmite aplikaciju Moj dm i prijavite se da biste započeli sakupljanje!</p>
+              <input type="text" id="login-email" placeholder="Unesite email za Moj dm nalog" aria-label="Moj dm Email" />
+              <button onclick="handleLogin()" aria-label="${translations[currentLang].login}">${translations[currentLang].login}</button>
+            </div>
+            <p class="privacy-notice">${translations[currentLang].privacy}</p>
+            <p class="fine-print">${translations[currentLang].finePrint}</p>
+          </div>
+        </div>
+      `;
+      panel.innerHTML = content;
+      panel.querySelector('.close-button').addEventListener('click', () => {
+        panel.classList.remove('open');
+      });
+      const headers = panel.querySelectorAll('.collapsible-header');
+      headers.forEach(header => {
+        header.addEventListener('click', toggleCollapsible);
+        header.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleCollapsible(event);
+          }
+        });
+      });
+    };
+
+    stickyButton.addEventListener('click', () => {
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) {
+        loadUserData().then(data => updateWidget(data));
+      }
+    });
+
+    // Initialize widget
+    updateWidget(initialData);
+  </script>
+</body>
+</html>
